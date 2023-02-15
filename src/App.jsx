@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FaSearch } from "react-icons/fa"
+import { FaSearch, FaWindowClose } from "react-icons/fa"
 import debounce from 'lodash.debounce'
 import data from '../src/data/tb_procedimento.json'
 
@@ -13,7 +13,6 @@ function App() {
   const updateSearchInput = (e) => setSearchInput(e.target.value);
   
   useEffect(() => {
-    console.log(' use effect run')
 
     if(searchInput === '') { 
       setResults([]);
@@ -28,24 +27,73 @@ function App() {
     resultsCache.length > 5 ? setHaveMoreItens(resultsCache.length - 4) : setHaveMoreItens(0);
 
     setResults(resultsCache.slice(0, 5));
-    console.log(results)
+
 
   }, [searchInput])
 
-  const debouncedOnChange = debounce(updateSearchInput, 1000)
+  const debouncedOnChange = debounce(updateSearchInput, 500)
+
+  const toBRL = (item) => {
+
+    const convertIntToBRL = (a) => {
+      a = a.toString()
+      a = a.substring(0, a.length - 2) + '.' + a.substring(a.length - 2, a.length);
+      a = parseFloat(a).toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+      return a;
+    }
+    
+    let total_h_cache = parseInt(item.vl_sh) + parseInt(item.vl_sp)
+
+    item.total_h = convertIntToBRL(total_h_cache)
+    item.vl_sa_brl = convertIntToBRL(item.vl_sa);
+    item.vl_sh_brl = convertIntToBRL(item.vl_sh);
+    item.vl_sp_brl = convertIntToBRL(item.vl_sp);
+
+    
+    return item;
+  }
 
   const handleClick = (item) => {
-    setCurrentProcedure(item)
-    setSearchInput('')
+    setCurrentProcedure(toBRL(item));
+    setSearchInput('');
+    console.log(currentProcedure)
   }
+
+  const empty = () => {
+    setCurrentProcedure(null);
+    setResults([]);
+  }
+
 
 
   return (
     <div className="container p-2 h-screen w-screen mx-auto flex items-center flex-col justify-center">
       {currentProcedure && (
         <div className="container p-2 flex-column w-[390px] justify-center bg-gray-200 rounded-t">
-          <h2>Nome do procedimento: {currentProcedure.no_procedimento}</h2>
-          <h2>Código do procedimento: {currentProcedure.co_procedimento}</h2>
+          <div className="w-full">
+            <FaWindowClose 
+              className="cursor-pointer h-5 w-5 ml-auto"
+              onClick={() => empty()}
+            />
+          </div>
+          <h3><strong>Código do procedimento: </strong>{currentProcedure.co_procedimento}</h3>
+          <h3><strong>Nome do procedimento: </strong>{currentProcedure.no_procedimento}</h3>
+          <div className="w-full flex justify-between">
+            <h3><strong>Serviço Ambulatorial: </strong></h3>
+            <p>{currentProcedure.vl_sa_brl}</p>
+          </div>
+          <div className="w-full flex justify-between">
+            <h3><strong>Serviço Hospitalar:</strong></h3>
+            <p>{currentProcedure.vl_sh_brl}</p>
+          </div>
+          <div className="w-full flex justify-between">
+            <h3><strong>Serviço Profissional:</strong></h3>
+            <p>{currentProcedure.vl_sp_brl}</p>
+          </div>
+          <div className="w-full flex justify-between">
+            <h3><strong>Total Hospitalar:</strong></h3>
+            <p>{currentProcedure.total_h}</p>
+          </div>
         </div>
       )}
       <div className="flex flex-column w-[390px] justify-center">
