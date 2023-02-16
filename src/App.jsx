@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FaSearch, FaWindowClose } from "react-icons/fa"
+import { FaSearch, FaWindowClose, FaGithub, FaLinkedin, FaWhatsapp } from "react-icons/fa"
 import debounce from 'lodash.debounce'
 import data from '../src/data/tb_procedimento.json'
 
@@ -21,7 +21,8 @@ function App() {
     }
    
     let resultsCache =  data.filter(
-      procedimento => procedimento.no_procedimento.includes(searchInput.toUpperCase())
+      procedimento => procedimento.no_procedimento.includes(searchInput.toUpperCase()) 
+      || procedimento.co_procedimento.includes(searchInput)
     );
 
     resultsCache.length > 5 ? setHaveMoreItens(resultsCache.length - 4) : setHaveMoreItens(0);
@@ -43,6 +44,8 @@ function App() {
     }
     
     let total_h_cache = parseInt(item.vl_sh) + parseInt(item.vl_sp)
+
+    item.dt_competencia_formated = `${item.dt_competencia.substring(0, 4)}/${item.dt_competencia.substring(4, 6)}`
 
     item.total_h = convertIntToBRL(total_h_cache)
     item.vl_sa_brl = convertIntToBRL(item.vl_sa);
@@ -68,8 +71,9 @@ function App() {
 
   return (
     <div className="container p-2 h-screen w-screen mx-auto flex items-center flex-col justify-center">
+      <h3 className="text-xl font-mono p-8">SIGTAP Consulta</h3>
       {currentProcedure && (
-        <div className="container p-2 flex-column w-[390px] justify-center bg-gray-200 rounded-t">
+        <div className="container p-2 flex-column w-[430px] justify-center bg-gray-200 rounded-t">
           <div className="w-full">
             <FaWindowClose 
               className="cursor-pointer h-5 w-5 ml-auto"
@@ -94,10 +98,14 @@ function App() {
             <h3><strong>Total Hospitalar:</strong></h3>
             <p>{currentProcedure.total_h}</p>
           </div>
+          <div className="w-full flex justify-between">
+            <h3><strong>Competência:</strong></h3>
+            <p>{currentProcedure.dt_competencia_formated}</p>
+          </div>
         </div>
       )}
-      <div className="flex flex-column w-[390px] justify-center">
-        <div className=" min-w-full relative flex items-center">
+      <div className="flex flex-column w-[430px] justify-center">
+        <div className="min-w-full relative flex items-center">
           <FaSearch className="absolute w-5 h-5 ml-2"/>
           <input
             type="text" 
@@ -107,7 +115,7 @@ function App() {
             onChange={debouncedOnChange}
           />
         </div>
-        <ul className="absolute mt-10 w-[390px] bg-slate-50 rounded-b max-h-60 overflow-y-auto">
+        <ul className="absolute mt-10 w-[430px] bg-slate-50 rounded-b max-h-60 overflow-y-auto">
           {results.map( (item, index) => (
             <li 
               key={index} 
@@ -118,6 +126,26 @@ function App() {
             </li>
           ))}
           {haveMoreItens > 0 &&  <li className="cursor-pointer p-2 bg-gray-300 align-self-center">Refine a busca, ({haveMoreItens}) itens encontrados...</li>}
+        </ul>
+      </div>
+      <div className="mt-60 p-4 gap-4">
+        <p>Desenvolvido por Ruan Costa Campos</p>
+        <ul className="flex p-4 gap-4 justify-center">
+          <li>
+            <a href="https://github.com/ruancostacampos">
+              <FaGithub className="h-7 w-7 hover:fill-blue-500"/>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/in/ruancostacampos/">
+              <FaLinkedin className="h-7 w-7 hover:fill-blue-500"/>
+            </a>
+          </li>
+          <li>
+            <a href="https://wa.me/5577991882211?text=Ol%C3%A1%2C%20vi%20seu%20projeto%20do%20SIGTAP%20e%20gostei!">
+              <FaWhatsapp className="h-7 w-7 hover:fill-green-500 transition-all"/>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
