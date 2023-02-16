@@ -4,7 +4,10 @@ const Footer = () => {
   return (
     <footer className="flex justify-center w-full bg-slate-300">
         <div className="flex items-center p-2 gap-4">
-          <p className="font-bold">Desenvolvido por Ruan Costa Campos</p>
+          <div className="flex gap-2 flex-wrap justify-center">
+            <p className="text-center">Desenvolvido por</p>
+            <strong>Ruan Costa Campos</strong>
+          </div>
           <ul className="flex p-4 gap-4 justify-center">
             <li>
               <a href="https://github.com/ruancostacampos">

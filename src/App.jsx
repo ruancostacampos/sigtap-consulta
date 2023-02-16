@@ -1,22 +1,15 @@
 import { useEffect, useState } from 'react';
-import { FaSearch} from "react-icons/fa";
+import { FaSearch, FaRegTimesCircle} from "react-icons/fa";
 import debounce from 'lodash.debounce';
 import data from '../src/data/tb_procedimento.json';
 import Footer from './components/Footer';
 
 function App() {
-  let defaultProcedure = {
-    vl_sh_brl: "",
-    vl_sa_brl: "",
-    vl_sp_brl: "",
-    total_h: "",
-    dt_competencia_formated: ""
-  }
 
   const [searchInput, setSearchInput] = useState('');
   const [results, setResults] = useState([]);
   const [haveMoreItens, setHaveMoreItens] = useState(0);
-  const [currentProcedure, setCurrentProcedure] = useState(defaultProcedure)
+  const [currentProcedure, setCurrentProcedure] = useState(null)
 
   const updateSearchInput = (e) => setSearchInput(e.target.value);
 
@@ -78,7 +71,7 @@ function App() {
 
   return (
     <div className="h-full w-full flex items-center flex-col justify-center">
-      <div className="flex flex-1 flex-col max-w-[430px] w-full items-center p-4 justify-center">
+      <div className="flex flex-1 flex-col max-w-[430px] w-full items-center p-4 justify-start">
         <h3 className="text-xl font-mono p-8">SIGTAP Consulta</h3>
         <div className="relative flex flex-col w-full justify-center">
           <div className="w-full relative flex">
@@ -90,8 +83,7 @@ function App() {
               className="w-full h-10 placeholder-gray-500 font-semibold rounded-t border-2 pl-8"
               onChange={debouncedOnChange}
             />
-          </div>
-          <ul className="absolute mt-[280px] w-full bg-slate-50 rounded-b max-h-60 overflow-y-auto">
+            <ul className="absolute mt-[40px] w-full bg-slate-50 rounded-b max-h-60 overflow-y-auto">
             {results.map((item, index) => (
               <li
                 key={index}
@@ -103,9 +95,17 @@ function App() {
             ))}
             {haveMoreItens > 0 && <li className="cursor-pointer p-2 bg-gray-300 align-self-center">Refine a busca, ({haveMoreItens}) itens encontrados...</li>}
           </ul>
+          </div>
         </div>
 
+        {currentProcedure && (
         <div className="mt-2 container p-2 flex-column w-full justify-center bg-slate-200 rounded-t">
+          <div className="w-full flex justify-end">
+            <FaRegTimesCircle 
+              className="w-5 h-5 cursor-pointer"
+              onClick={() =>{setCurrentProcedure(null)}}
+            />
+          </div>
           <h3><strong>Código do procedimento: </strong>{currentProcedure.co_procedimento}</h3>
           <h3><strong>Nome do procedimento: </strong>{currentProcedure.no_procedimento}</h3>
           <div className="w-full flex justify-between">
@@ -128,7 +128,8 @@ function App() {
             <h3><strong>Competência:</strong></h3>
             <p>{currentProcedure.dt_competencia_formated}</p>
           </div>
-        </div>
+      </div>
+        )}
       </div>
       <Footer />
     </div>
