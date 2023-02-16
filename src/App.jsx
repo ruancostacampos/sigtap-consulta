@@ -67,7 +67,6 @@ function App() {
   const handleClick = (item) => {
     setCurrentProcedure(toBRL(item));
     setSearchInput('');
-    console.log(currentProcedure)
   }
 
   const empty = () => {
